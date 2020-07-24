@@ -2,30 +2,36 @@
 
 ## Requirements
 
-Python 3.6+
+Python 3.6+  
+pipx
 
 ## Install
 
-Define `DATA_SERVER_URL` to point to your [snappy data server](https://github.com/openshift-scale/snappy-data-server).
-
-Feel free to install it into a virtual environment and add it to your system path, if needed.
+### pipx
 
 ```shell
-git clone https://github.com/mfleader/snappy-client
-cd snappy-client
-pip install --requirement requirements.txt
+python -m pip install --user pipx
+```
+
+### Snappy CLI
+
+Define `DATA_SERVER_URL` to point to your [snappy data server](https://github.com/openshift-scale/snappy-data-server).
+
+
+```shell
+pipx install git+https://github.com/mfleader/snappyCLI.git
 ```
 
 ## Example
 
-Usage is automatically documented by [Typer](https://typer.tiangolo.com/). Available commands can be listed with the help option.
+Usage is automatically documented by [Typer](https://typer.tiangolo.com/). Available commands can be listed with or without the help option.
 
 ```shell
-python snappy-cli.py --help
+$ snappy
 ```
 
 ```shell
-Usage: snappy-cli.py [OPTIONS] COMMAND [ARGS]...
+Usage: snappy [OPTIONS] COMMAND [ARGS]...
 
 Options:
   --install-completion  Install completion for the current shell.
@@ -43,8 +49,8 @@ Commands:
 Get help with a command:
 
 ```shell
-python snappy-cli.py <cmd> --help
-python snappy-cli.py login --help
+$ snappy <cmd> --help
+$ snappy login --help
 ```
 
 ```shell

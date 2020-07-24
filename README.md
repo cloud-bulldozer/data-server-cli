@@ -1,4 +1,4 @@
-# Snappy Client
+# Snappy CLI
 
 ## Requirements
 
@@ -6,7 +6,7 @@ Python 3.6+
 
 ## Install
 
-Define `DATA_SERVER_URL` to point to your snappy data server.
+Define `DATA_SERVER_URL` to point to your [snappy data server](https://github.com/openshift-scale/snappy-data-server).
 
 Feel free to install it into a virtual environment and add it to your system path, if needed.
 

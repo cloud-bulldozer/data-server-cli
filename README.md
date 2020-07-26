@@ -1,10 +1,12 @@
 # Snappy CLI
 
+Command line interface to a local client for a [snappy data server](https://github.com/openshift-scale/).
+
 ## Requirements
 
 Python 3.6+  
 pipx  
-Running [snappy data server](https://github.com/openshift-scale/snappy-data-server)
+Running snappy data server
 
 ## Install
 
@@ -16,7 +18,7 @@ python -m pip install --user pipx
 
 ### Snappy CLI
 
-Define `DATA_SERVER_URL` to point to your [snappy data server](https://github.com/openshift-scale/snappy-data-server).
+To facilitate your use of `snappy`, define an environment variable, `DATA_SERVER_URL`, to point to your snappy data server.
 
 
 ```shell
@@ -26,7 +28,11 @@ snappy install
 
 ## Example
 
-Usage is automatically documented by [Typer](https://typer.tiangolo.com/). Available commands can be listed with or without the help option.
+Usage is automatically documented by [Typer](https://typer.tiangolo.com/). 
+
+### Help
+
+Available commands can be listed with or without the help option.
 
 ```shell
 $ snappy
@@ -48,10 +54,11 @@ Commands:
 
 ```
 
-Get help with a command:
+
+Help with a command.
 
 ```shell
-$ snappy <cmd> --help
+  snappy <cmd> --help
 $ snappy login --help
 ```
 
@@ -68,3 +75,25 @@ Options:
 
 ```
 
+### Authentication and post
+
+```shell
+$ snappy login
+```
+
+Enter credentials.
+
+```shell
+Username:
+Password:
+```
+
+```shell
+$ snappy post-file ./hat.jpg
+```
+
+### When you're done
+
+```shell
+snappy logout
+```

@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import subprocess as sbp
 from pathlib import Path
 
-import requests
 import typer
 from toolz import pipe
+
+import auth
+import client
 
 
 app = typer.Typer()
@@ -22,37 +23,11 @@ def exception_handler(func):
     return inner_func
 
 
-def response_handler(r = requests.Response):
-    r.raise_for_status()
-    return r.json()
-
-        
-def _login_req(url: str, username: str, password: str):
-    return requests.post(
-        url,
-        data = {
-            'username': username,
-            'password': password
-        })
-
-
-def _post_file_req(url: str, token: str, filepath: Path):
-    return requests.post(
-        url,
-        files = {
-            'file': (str(filepath), filepath.open('rb'))
-        },
-        headers = {
-            'Authorization': f'Bearer {token}'
-        }
-    )
-
-
 @exception_handler
 def _login(url: str, username: str, password: str):
     return pipe(
-        _login_req(url, username, password),
-        response_handler,
+        client._login_req(url, username, password),
+        client.response_handler,
         lambda r: r['access_token']
     )
 
@@ -60,8 +35,8 @@ def _login(url: str, username: str, password: str):
 @exception_handler
 def _post_file(url: str, token: str, filepath: Path):
     return pipe(
-        _post_file_req(url, token,filepath),
-        response_handler
+        client._post_file_req(url, token,filepath),
+        client.response_handler
     )
 
 
@@ -79,20 +54,44 @@ def login(
         'http://localhost:8000',
         envvar = 'DATA_SERVER_URL'
     )
-):
-    typer.echo(_login(f'{url}/auth/jwt/login', username, password))
+):  
+    pipe(
+        auth.add(token = _login(f'{url}/auth/jwt/login', username, password)),
+        auth.save
+    )    
+    typer.echo('maybe login succeeded?')
 
 
 @app.command()
 def post_file(
-    token: str,
     filepath: Path,
+    token = None,
     url: str = typer.Argument(
         'http://localhost:8000',
         envvar = 'DATA_SERVER_URL'
     )
 ):
-    typer.echo(_post_file(f'{url}/api', token, filepath))
+    typer.echo(
+        _post_file(
+            f'{url}/api', 
+            token = auth.token(auth.load()),
+            filepath = filepath))
+
+
+@app.command()
+def logout():
+    pipe(
+        auth.rm,
+        auth.save
+    )
+    typer.echo('logged out of snappy')
+
+
+@app.command()
+def install():
+    Path(Path.home(), '.snappy').mkdir(exist_ok=True)
+    auth.save(auth.rm())
+    typer.echo('snappy ready to go!')
 
 
 if __name__ == '__main__':

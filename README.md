@@ -3,7 +3,8 @@
 ## Requirements
 
 Python 3.6+  
-pipx
+pipx  
+Running [snappy data server](https://github.com/openshift-scale/snappy-data-server)
 
 ## Install
 
@@ -20,6 +21,7 @@ Define `DATA_SERVER_URL` to point to your [snappy data server](https://github.co
 
 ```shell
 pipx install git+https://github.com/mfleader/snappyCLI.git
+snappy install
 ```
 
 ## Example

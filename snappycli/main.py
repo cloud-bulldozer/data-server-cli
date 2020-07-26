@@ -59,7 +59,7 @@ def login(
         auth.add(token = _login(f'{url}/auth/jwt/login', username, password)),
         auth.save
     )    
-    typer.echo('maybe login succeeded?')
+    typer.echo('login succeeded')
 
 
 @app.command()
@@ -80,10 +80,7 @@ def post_file(
 
 @app.command()
 def logout():
-    pipe(
-        auth.rm,
-        auth.save
-    )
+    auth.save(auth.rm())
     typer.echo('logged out of snappy')
 
 

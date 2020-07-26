@@ -11,6 +11,7 @@ def save(
     auths: dict, 
     filepath: Path = Path(Path.home(), '.snappy', 'auth.json'
 )):
+    print(auths)
     with open(filepath, 'w') as auths_json:
         json.dump(auths, auths_json)
 

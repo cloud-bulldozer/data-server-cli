@@ -6,8 +6,8 @@ from pathlib import Path
 import typer
 from toolz import pipe
 
-import auth
-import client
+import snappycli.auth as auth
+import snappycli.client as client
 
 
 app = typer.Typer()

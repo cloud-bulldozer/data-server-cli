@@ -71,11 +71,12 @@ def post_file(
         envvar = 'DATA_SERVER_URL'
     )
 ):
-    typer.echo(
+    typer.echo(f"""you're file is at {
         _post_file(
             f'{url}/api', 
             token = auth.token(auth.load()),
-            filepath = filepath))
+            filepath = filepath)
+    }""")
 
 
 @app.command()

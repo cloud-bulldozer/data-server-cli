@@ -26,6 +26,13 @@ pipx install git+https://github.com/mfleader/snappyCLI.git
 snappy install
 ```
 
+## Upgrade
+
+```shell
+pipx install --force git+https://github.com/mfleader/snappyCLI.git
+```
+
+
 ## Example
 
 Usage is automatically documented by [Typer](https://typer.tiangolo.com/). 

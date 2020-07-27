@@ -64,9 +64,10 @@ def login(
 
 @app.command()
 def post_file(
-    filepath: Path,
-    token = None,
-    url: str = typer.Argument(
+    filepath: Path = 
+        typer.Option(...),
+    url: str = 
+        typer.Option(
         'http://localhost:8000',
         envvar = 'DATA_SERVER_URL'
     )
@@ -87,6 +88,7 @@ def logout():
 
 @app.command()
 def install():
+    """Automatically add required system resource for snappy cli"""
     Path(Path.home(), '.snappy').mkdir(exist_ok=True)
     auth.save(auth.rm())
     typer.echo('snappy ready to go!')

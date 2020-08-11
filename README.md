@@ -56,9 +56,11 @@ Options:
   --help                Show this message and exit.
 
 Commands:
-  login
+  install       Automatically add required system resource for snappy cli
+  login         Login to a snappy data server with a prompt.
+  logout
   post-file
-
+  script-login  Login to a snappy data server with a shell script using...
 ```
 
 
@@ -66,20 +68,25 @@ Help with a command.
 
 ```shell
   snappy <cmd> --help
-$ snappy login --help
+$ snappy script-login --help
 ```
 
 ```shell
-Usage: snappy-cli.py login [OPTIONS] [URL]
+Usage: snappy script-login [OPTIONS] DATA_SERVER_USERNAME
+                            DATA_SERVER_PASSWORD
+
+  Login to a snappy data server with a shell script using environment
+  variables.
 
 Arguments:
-  [URL]  [env var: DATA_SERVER_URL;default: http://localhost:8000]
+  DATA_SERVER_USERNAME  [env var: DATA_SERVER_USERNAME;required]
+  DATA_SERVER_PASSWORD  [env var: DATA_SERVER_PASSWORD;required]
 
 Options:
-  --username TEXT  [env var: DATA_SERVER_USERNAME; required]
-  --password TEXT  [required]
-  --help           Show this message and exit.
+  --data-server-url TEXT  [env var: DATA_SERVER_URL; default:
+                          http://localhost:7070]
 
+  --help                  Show this message and exit.
 ```
 
 ### Authentication and post

@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import requests
+from toolz import pipe
 
 
 def response_handler(r = requests.Response):
@@ -26,4 +27,19 @@ def _post_file_req(url: str, token: str, filepath: Path):
         headers = {
             'Authorization': f'Bearer {token}'
         }
+    )
+
+
+def token(url: str, username: str, password: str):
+    return pipe(
+        _login_req(url, username, password),
+        response_handler,
+        lambda r: r['access_token']
+    )
+
+
+def post_file(url: str, token: str, filepath: Path):
+    return pipe(
+        _post_file_req(url, token,filepath),
+        response_handler
     )

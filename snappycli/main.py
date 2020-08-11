@@ -24,52 +24,75 @@ def exception_handler(func):
 
 
 @exception_handler
-def _login(url: str, username: str, password: str):
-    return pipe(
-        client._login_req(url, username, password),
-        client.response_handler,
-        lambda r: r['access_token']
+def _post_file(url: str, token: str, filepath: Path):
+    return client.post_file(
+        url, token, filepath
     )
 
 
 @exception_handler
-def _post_file(url: str, token: str, filepath: Path):
-    return pipe(
-        client._post_file_req(url, token,filepath),
-        client.response_handler
+def _login(url: str, username: str, password: str):
+    pipe(
+        auth.add(client.token(f'{url}/auth/jwt/login', username, password)),
+        auth.save
     )
+
+
+@app.command()
+def script_login(
+    data_server_username: str = typer.Argument(
+        ...,
+        envvar = 'DATA_SERVER_USERNAME'
+    ),
+    data_server_password: str = typer.Argument(
+        ...,
+        envvar = 'DATA_SERVER_PASSWORD'
+    ),
+    data_server_url: str = typer.Option(
+        'http://localhost:7070',
+        envvar = 'DATA_SERVER_URL'
+    )
+):  
+    """
+    Login to a snappy data server with a shell script
+    using environment variables.
+    """
+    _login(
+        data_server_url, 
+        data_server_username, 
+        data_server_password)
 
 
 @app.command()
 def login(
     username: str = typer.Option(
         ...,
-        prompt=True, envvar = 'DATA_SERVER_USERNAME'
+        prompt=True,
+        envvar = 'DATA_SERVER_USERNAME'
     ),
     password: str = typer.Option(
         ...,
         prompt=True, hide_input=True, hidden=True,
-        envvar = 'DATA_SERVER_PASSWORD'
     ),
-    url: str = typer.Argument(
-        'http://localhost:8000',
+    url: str = typer.Option(
+        'http://localhost:7070',
         envvar = 'DATA_SERVER_URL'
     )
 ):  
-    pipe(
-        auth.add(token = _login(f'{url}/auth/jwt/login', username, password)),
-        auth.save
-    )    
+    """
+    Login to a snappy data server with a prompt.
+    """
+    _login(url, username, password)
     typer.echo('login succeeded')
 
 
 @app.command()
 def post_file(
     filepath: Path = 
-        typer.Option(...),
+        typer.Argument(...),
     url: str = 
         typer.Option(
-        'http://localhost:8000',
+        'http://localhost:7070',
         envvar = 'DATA_SERVER_URL'
     )
 ):

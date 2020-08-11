@@ -48,7 +48,8 @@ def login(
     ),
     password: str = typer.Option(
         ...,
-        prompt=True, hide_input=True
+        prompt=True, hide_input=True, hidden=True,
+        envvar = 'DATA_SERVER_PASSWORD'
     ),
     url: str = typer.Argument(
         'http://localhost:8000',

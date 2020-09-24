@@ -1,4 +1,4 @@
-# Snappy CLI
+# Data Server (Snappy) CLI
 
 Command line interface to a local client for a [snappy data server](https://github.com/openshift-scale/).
 

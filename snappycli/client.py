@@ -27,7 +27,7 @@ def _post_file_req(url: str, token: str, filepath: Path, filedir: str):
         headers = {
             'Authorization': f'Bearer {token}'
         },
-        filedir = filedir
+        data = {"filedir": filedir}
     )
 
 

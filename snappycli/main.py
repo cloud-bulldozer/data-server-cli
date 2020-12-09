@@ -97,7 +97,7 @@ def post_file(
     ),
     filedir: str =
         typer.Option(
-            None,
+            '',
             envvar = 'SNAPPY_FILE_DIR'
         )
 ):

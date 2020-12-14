@@ -27,7 +27,7 @@ def _post_file_req(url: str, token: str, filepath: Path, filedir: str):
         headers = {
             'Authorization': f'Bearer {token}'
         },
-        data = {"filedir": filedir}
+        params = {"filedir": filedir}
     )
 
 
@@ -41,6 +41,6 @@ def token(url: str, username: str, password: str):
 
 def post_file(url: str, token: str, filepath: Path, filedir: str):
     return pipe(
-        _post_file_req(url=token, token=token, filepath=filepath, filedir=filedir),
+        _post_file_req(url=url, token=token, filepath=filepath, filedir=filedir),
         response_handler
     )

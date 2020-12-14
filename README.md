@@ -63,6 +63,8 @@ Commands:
   script-login  Login to a snappy data server with a shell script using...
 ```
 
+Snappy stores the file in the data_server directory, in case you want to create a new
+directory in data_server and store file in that, set the SNAPPY_FILE_DIR env var to directory name.
 
 Help with a command.
 
@@ -81,6 +83,7 @@ Usage: snappy script-login [OPTIONS] DATA_SERVER_USERNAME
 Arguments:
   DATA_SERVER_USERNAME  [env var: DATA_SERVER_USERNAME;required]
   DATA_SERVER_PASSWORD  [env var: DATA_SERVER_PASSWORD;required]
+  SNAPPY_FILE_DIR       [env var: SNAPPY_FILE_DIR; optional]
 
 Options:
   --data-server-url TEXT  [env var: DATA_SERVER_URL; default:

@@ -37,6 +37,22 @@ pipx install --force git+https://openshift-scale/data-server-cli.git
 
 Usage is automatically documented by [Typer](https://typer.tiangolo.com/). 
 
+### Post a file
+
+```shell
+Usage: snappy post-file [OPTIONS] FILEPATH
+
+Arguments:
+  FILEPATH  [required]
+
+Options:
+  --url TEXT      [env var: DATA_SERVER_URL; default: http://localhost:7070]
+  --filedir TEXT  [env var: SNAPPY_FILE_DIR; default: ]
+  --help          Show this message and exit.
+```
+Snappy stores the file in the data_server directory, in case you want to create a new
+directory in data_server and store file in that, set the SNAPPY_FILE_DIR env var to directory name.
+
 ### Help
 
 Available commands can be listed with or without the help option.
@@ -63,8 +79,7 @@ Commands:
   script-login  Login to a snappy data server with a shell script using...
 ```
 
-Snappy stores the file in the data_server directory, in case you want to create a new
-directory in data_server and store file in that, set the SNAPPY_FILE_DIR env var to directory name.
+
 
 Help with a command.
 

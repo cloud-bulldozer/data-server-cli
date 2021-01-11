@@ -18,15 +18,16 @@ def _login_req(url: str, username: str, password: str):
         })
 
 
-def _post_file_req(url: str, token: str, filepath: Path):
+def _post_file_req(url: str, token: str, filepath: Path, filedir: str):
     return requests.post(
-        url,
+        url = url,
         files = {
             'file': (str(filepath), filepath.open('rb'))
         },
         headers = {
             'Authorization': f'Bearer {token}'
-        }
+        },
+        params = {"filedir": filedir}
     )
 
 
@@ -38,8 +39,8 @@ def token(url: str, username: str, password: str):
     )
 
 
-def post_file(url: str, token: str, filepath: Path):
+def post_file(url: str, token: str, filepath: Path, filedir: str):
     return pipe(
-        _post_file_req(url, token,filepath),
+        _post_file_req(url=url, token=token, filepath=filepath, filedir=filedir),
         response_handler
     )

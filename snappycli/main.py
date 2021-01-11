@@ -24,9 +24,9 @@ def exception_handler(func):
 
 
 @exception_handler
-def _post_file(url: str, token: str, filepath: Path):
+def _post_file(url: str, token: str, filepath: Path, filedir: str):
     return client.post_file(
-        url, token, filepath
+        url=url, token=token, filepath=filepath, filedir=filedir
     )
 
 
@@ -94,13 +94,19 @@ def post_file(
         typer.Option(
         'http://localhost:7070',
         envvar = 'DATA_SERVER_URL'
-    )
+    ),
+    filedir: str =
+        typer.Option(
+            '',
+            envvar = 'SNAPPY_FILE_DIR'
+        )
 ):
     typer.echo(f"""you're file is at {
         _post_file(
-            f'{url}/api', 
+            url = f'{url}/api', 
             token = auth.token(auth.load()),
-            filepath = filepath)
+            filepath = filepath,
+            filedir = filedir)
     }""")
 
 

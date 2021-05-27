@@ -1,7 +1,9 @@
 from pathlib import Path
+import asyncio
 
-import requests
 from toolz import pipe
+import requests
+import httpx
 
 
 def response_handler(r = requests.Response):
@@ -18,15 +20,16 @@ def _login_req(url: str, username: str, password: str):
         })
 
 
-def _post_file_req(url: str, token: str, filepath: Path):
+def _post_file_req(url: str, token: str, filepath: Path, filedir: str):
     return requests.post(
-        url,
+        url = url,
         files = {
             'file': (str(filepath), filepath.open('rb'))
         },
         headers = {
             'Authorization': f'Bearer {token}'
-        }
+        },
+        params = {"filedir": filedir}
     )
 
 
@@ -41,5 +44,26 @@ def token(url: str, username: str, password: str):
 def post_file(url: str, token: str, filepath: Path):
     return pipe(
         _post_file_req(url, token,filepath),
-        response_handler
+        response_handler,
+        lambda r: r['loc']
     )
+
+
+async def async_post_file_req(
+    url: str, token: str, filepath: Path, filedir: str = ''):    
+    async with httpx.AsyncClient(
+        timeout=httpx.Timeout(write=None, read=None, 
+            connect=None, pool=None)) as client:
+        r = await client.post(
+            url, 
+            params={
+                'filename': filepath.name,
+                'filedir': filedir
+            },
+            files={
+                'file': (filepath.name, filepath.open('rb'), 'application/octet-stream')
+            },
+            headers = {
+                'Authorization': f'Bearer {token}'
+            }
+        )

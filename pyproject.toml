@@ -5,7 +5,7 @@ description = "command line interface to a snappy data server client"
 authors = ["mleader <mleader@redhat.com>"]
 license = "MIT"
 readme = "README.md"
-repository = "https://github.com/mfleader/snappyCLI.git"
+repository = "https://github.com/openshift-scale/data-server-cli.git"
 keywords = ["snappycli"]
 classifiers = [
     "Environment :: Console"

@@ -32,8 +32,9 @@ def token(url: str, username: str, password: str) -> str:
 
 async def upload_bytes(
     file: BinaryIO,
-    chunk_size: int = 1_000_000
+    chunk_size: int = 262_144_000
 ) -> AsyncGenerator[bytes, None]:
+    # 250 MiB == 250 * 1024 * 1024 == 262_144_000
     contents = 'dummy'
     pointer = 0
     while len(contents):

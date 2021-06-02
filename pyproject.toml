@@ -15,7 +15,7 @@ include = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.6"
+python = "^3.7"
 toolz = "^0.10.0"
 typer = {extras = ["all"], version = "^0.3.1"}
 httpx = "^0.18.1"

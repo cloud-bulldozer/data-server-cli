@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "snappycli"
-version = "0.2.0"
+version = "0.3.0"
 description = "command line interface to a snappy data server client"
 authors = ["mleader <mleader@redhat.com>"]
 license = "MIT"

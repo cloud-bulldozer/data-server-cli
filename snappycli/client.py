@@ -65,7 +65,7 @@ async def _async_post_file(
 
 
 async def async_post_file(
-    url: str, tkn: str, filepath: Path, filedir: str
+    url: str, tkn: str, filepath: Path, filedir: str = ''
 ) -> str:
     return pipe(
         await _async_post_file(url, tkn, filepath, filedir),

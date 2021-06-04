@@ -15,17 +15,7 @@ import snappycli.client as client
 app = typer.Typer()
 
 
-def exception_handler(func) -> Callable:
-    def inner_func(*args, **kwargs):
-        try:
-            func(*args, **kwargs)
-        except Exception as e:
-            typer.echo(e)
-            raise typer.Abort()
-    return inner_func
-
-
-def exc(fn) -> Callable:
+def exception_handler(fn) -> Callable:
     if asyncio.iscoroutinefunction(fn):
         @wraps(fn)
         async def wrapper(*args, **kwargs):
@@ -45,7 +35,7 @@ def exc(fn) -> Callable:
         return inner_func
 
 
-@exc
+@exception_handler
 async def _async_post_file(
     url: str, token: str, filepath: Path, filedir: str
 ) -> str:
@@ -54,7 +44,7 @@ async def _async_post_file(
     )
 
 
-@exc
+@exception_handler
 def _login(url: str, username: str, password: str) -> str:
     pipe(
         auth.add(client.token(f'{url}/auth/jwt/login', username, password)),

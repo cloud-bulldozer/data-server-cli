@@ -4,6 +4,7 @@
 import asyncio
 from pathlib import Path
 from typing import Callable
+from functools import wraps
 
 import typer
 from toolz import pipe
@@ -17,14 +18,34 @@ app = typer.Typer()
 def exception_handler(func) -> Callable:
     def inner_func(*args, **kwargs):
         try:
-            return func(*args, **kwargs)
+            func(*args, **kwargs)
         except Exception as e:
             typer.echo(e)
             raise typer.Abort()
     return inner_func
 
 
-@exception_handler
+def exc(fn) -> Callable:
+    if asyncio.iscoroutinefunction(fn):
+        @wraps(fn)
+        async def wrapper(*args, **kwargs):
+            try:
+                return await fn(*args, **kwargs)
+            except Exception as e:
+                typer.echo(e)
+                raise typer.Abort()
+        return wrapper
+    else:
+        def inner_func(*args, **kwargs):
+            try:
+                return fn(*args, **kwargs)
+            except Exception as e:
+                typer.echo(e)
+                raise typer.Abort()
+        return inner_func
+
+
+@exc
 async def _async_post_file(
     url: str, token: str, filepath: Path, filedir: str
 ) -> str:
@@ -33,7 +54,7 @@ async def _async_post_file(
     )
 
 
-@exception_handler
+@exc
 def _login(url: str, username: str, password: str) -> str:
     pipe(
         auth.add(client.token(f'{url}/auth/jwt/login', username, password)),

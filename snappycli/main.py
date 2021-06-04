@@ -1,7 +1,9 @@
-#!/usr/bin/env python
+# !/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import asyncio
 from pathlib import Path
+from typing import Callable
 
 import typer
 from toolz import pipe
@@ -9,11 +11,10 @@ from toolz import pipe
 import snappycli.auth as auth
 import snappycli.client as client
 
-
 app = typer.Typer()
 
 
-def exception_handler(func):
+def exception_handler(func) -> Callable:
     def inner_func(*args, **kwargs):
         try:
             return func(*args, **kwargs)
@@ -24,14 +25,16 @@ def exception_handler(func):
 
 
 @exception_handler
-def _post_file(url: str, token: str, filepath: Path, filedir: str):
-    return client.post_file(
-        url=url, token=token, filepath=filepath, filedir=filedir
+async def _async_post_file(
+    url: str, token: str, filepath: Path, filedir: str
+) -> str:
+    return await client.async_post_file(
+        url=url, tkn=token, filepath=filepath, filedir=filedir
     )
 
 
 @exception_handler
-def _login(url: str, username: str, password: str):
+def _login(url: str, username: str, password: str) -> str:
     pipe(
         auth.add(client.token(f'{url}/auth/jwt/login', username, password)),
         auth.save
@@ -42,24 +45,24 @@ def _login(url: str, username: str, password: str):
 def script_login(
     data_server_username: str = typer.Argument(
         ...,
-        envvar = 'DATA_SERVER_USERNAME'
+        envvar='DATA_SERVER_USERNAME'
     ),
     data_server_password: str = typer.Argument(
         ...,
-        envvar = 'DATA_SERVER_PASSWORD'
+        envvar='DATA_SERVER_PASSWORD'
     ),
     data_server_url: str = typer.Option(
         'http://localhost:7070',
-        envvar = 'DATA_SERVER_URL'
+        envvar='DATA_SERVER_URL'
     )
-):  
+) -> None:
     """
     Login to a snappy data server with a shell script
     using environment variables.
     """
     _login(
-        data_server_url, 
-        data_server_username, 
+        data_server_url,
+        data_server_username,
         data_server_password)
 
 
@@ -68,7 +71,7 @@ def login(
     username: str = typer.Option(
         ...,
         prompt=True,
-        envvar = 'DATA_SERVER_USERNAME'
+        envvar='DATA_SERVER_USERNAME'
     ),
     password: str = typer.Option(
         ...,
@@ -76,9 +79,9 @@ def login(
     ),
     url: str = typer.Option(
         'http://localhost:7070',
-        envvar = 'DATA_SERVER_URL'
+        envvar='DATA_SERVER_URL'
     )
-):  
+) -> None:
     """
     Login to a snappy data server with a prompt.
     """
@@ -88,36 +91,33 @@ def login(
 
 @app.command()
 def post_file(
-    filepath: Path = 
-        typer.Argument(...),
-    url: str = 
-        typer.Option(
+    filepath: Path = typer.Argument(...),
+    url: str = typer.Option(
         'http://localhost:7070',
-        envvar = 'DATA_SERVER_URL'
+        envvar='DATA_SERVER_URL'
     ),
-    filedir: str =
-        typer.Option(
-            '',
-            envvar = 'SNAPPY_FILE_DIR'
-        )
-):
+    filedir: str = typer.Option(
+        '',
+        envvar='SNAPPY_FILE_DIR'
+    )
+) -> None:
     typer.echo(f"""you're file is at {
-        _post_file(
-            url = f'{url}/api', 
-            token = auth.token(auth.load()),
-            filepath = filepath,
-            filedir = filedir)
+    asyncio.run(_async_post_file(
+        url=f'{url}/api',
+        token=auth.token(auth.load()),
+        filepath=filepath,
+        filedir=filedir))
     }""")
 
 
 @app.command()
-def logout():
+def logout() -> None:
     auth.save(auth.rm())
     typer.echo('logged out of snappy')
 
 
 @app.command()
-def install():
+def install() -> None:
     """Automatically add required system resource for snappy cli"""
     Path(Path.home(), '.snappy').mkdir(exist_ok=True)
     auth.save(auth.rm())

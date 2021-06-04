@@ -103,7 +103,7 @@ def post_file(
 ) -> None:
     typer.echo(f"""you're file is at {
     asyncio.run(_async_post_file(
-        url=f'{url}/stream',
+        url=f'{url}/api',
         token=auth.token(auth.load()),
         filepath=filepath,
         filedir=filedir))

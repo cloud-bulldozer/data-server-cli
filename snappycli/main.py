@@ -15,7 +15,7 @@ import snappycli.client as client
 app = typer.Typer()
 
 
-def exception_handler(fn) -> Callable:
+def exception_handler(fn: Callable) -> Callable:
     if asyncio.iscoroutinefunction(fn):
         @wraps(fn)
         async def wrapper(*args, **kwargs):
@@ -26,13 +26,14 @@ def exception_handler(fn) -> Callable:
                 raise typer.Abort()
         return wrapper
     else:
-        def inner_func(*args, **kwargs):
+        @wraps(fn)
+        def wrapper(*args, **kwargs):
             try:
                 return fn(*args, **kwargs)
             except Exception as e:
                 typer.echo(e)
                 raise typer.Abort()
-        return inner_func
+        return wrapper
 
 
 @exception_handler
@@ -112,6 +113,8 @@ def post_file(
         envvar='SNAPPY_FILE_DIR'
     )
 ) -> None:
+    import os
+    typer.echo(f"url {os.getenv('DATA_SERVER_URL')}")
     typer.echo(f"""you're file is at {
     asyncio.run(_async_post_file(
         url=f'{url}/api',

@@ -50,8 +50,11 @@ Options:
   --filedir TEXT  [env var: SNAPPY_FILE_DIR; default: ]
   --help          Show this message and exit.
 ```
-Snappy stores the file in the data_server directory, in case you want to create a new
-directory in data_server and store file in that, set the SNAPPY_FILE_DIR env var to directory name.
+
+Snappy's default root storage directory is called `data_server`. You can create a
+subdirectory within Snappy's storage directory by using the `--filedir` option, 
+or the `SNAPPY_FILE_DIR` environment variable.
+
 
 ### Help
 

@@ -113,8 +113,6 @@ def post_file(
         envvar='SNAPPY_FILE_DIR'
     )
 ) -> None:
-    import os
-    typer.echo(f"url {os.getenv('DATA_SERVER_URL')}")
     typer.echo(f"""you're file is at {
     asyncio.run(_async_post_file(
         url=f'{url}/api',

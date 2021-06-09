@@ -37,6 +37,8 @@ def token(url: str, username: str, password: str) -> str:
 
 
 async def _tell_aiofile(file: BinaryIO) -> int:
+    # with asyncio, file.tell() returns generator containing a
+    # future
     done, pending = await asyncio.wait({next(file.tell())})
     return int(done.pop().result())
 

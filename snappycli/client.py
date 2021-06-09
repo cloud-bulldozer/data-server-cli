@@ -1,9 +1,15 @@
+import sys
+import os
+
 from pathlib import Path
 from typing import (AsyncGenerator, BinaryIO)
 
 from toolz import pipe
 import httpx
 import aiofiles
+import asyncio
+
+from tqdm import tqdm
 
 
 def response_handler(r: httpx.Response) -> dict:
@@ -30,18 +36,42 @@ def token(url: str, username: str, password: str) -> str:
     )
 
 
+async def _tell_aiofile(file: BinaryIO) -> int:
+    done, pending = await asyncio.wait({next(file.tell())})
+    return int(done.pop().result())
+
+
+async def _get_file_size(file: BinaryIO) -> int:
+    current_pointer = await _tell_aiofile(file)
+    await file.seek(0, os.SEEK_END)
+    size = await _tell_aiofile(file)
+    await file.seek(current_pointer, os.SEEK_SET)
+
+    return size
+
+
 async def upload_bytes(
-    file: BinaryIO,
-    chunk_size: int = 262_144_000
+    file: BinaryIO, chunk_size: int = 262_144_000
 ) -> AsyncGenerator[bytes, None]:
     # 250 MiB == 250 * 1024 * 1024 == 262_144_000
-    contents = 'dummy'
+    contents = "dummy"
     pointer = 0
-    while len(contents):
-        await file.seek(pointer)
-        pointer += chunk_size
-        contents = await file.read(chunk_size)
-        yield contents
+    file_size = await _get_file_size(file)
+
+    with tqdm(
+        total=file_size,
+        unit="B",
+        unit_scale=True,
+        unit_divisor=1024,
+        file=sys.stdout,
+        desc=f'Posting {file.name}'
+    ) as progress:
+        while len(contents):
+            await file.seek(pointer)
+            pointer += chunk_size
+            contents = await file.read(chunk_size)
+            progress.update(float(chunk_size))
+            yield contents
 
 
 async def _async_post_file(

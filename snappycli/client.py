@@ -37,8 +37,7 @@ def token(url: str, username: str, password: str) -> str:
 
 
 async def _tell_aiofile(file: BinaryIO) -> int:
-    # with asyncio, file.tell() returns generator containing a
-    # future
+    # with asyncio, file.tell() returns generator containing a future
     done, pending = await asyncio.wait({next(file.tell())})
     return int(done.pop().result())
 
@@ -56,7 +55,7 @@ async def upload_bytes(
     file: BinaryIO, chunk_size: int = 262_144_000
 ) -> AsyncGenerator[bytes, None]:
     # 250 MiB == 250 * 1024 * 1024 == 262_144_000
-    contents = "dummy"
+    contents = 'dummy'
     pointer = 0
     file_size = await _get_file_size(file)
 

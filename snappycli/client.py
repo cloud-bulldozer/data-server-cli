@@ -30,7 +30,7 @@ def token(url: str, username: str, password: str) -> str:
     )
 
 
-async def upload_bytes(
+async def async_upload_bytes(
     file: BinaryIO,
     chunk_size: int = 262_144_000
 ) -> AsyncGenerator[bytes, None]:
@@ -39,7 +39,7 @@ async def upload_bytes(
     pointer = 0
     while len(contents):
         await file.seek(pointer)
-        pointer += chunk_size
+        pointer += chunk_size        
         contents = await file.read(chunk_size)
         yield contents
 
@@ -56,7 +56,7 @@ async def _async_post_file(
                 'filename': filepath.name,
                 'filedir' : filedir
             },
-            data=upload_bytes(file),
+            data=async_upload_bytes(file),
             headers={
                 'Authorization': f'Bearer {tkn}'
             }

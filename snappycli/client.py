@@ -1,7 +1,7 @@
 import sys
 
 from pathlib import Path
-from typing import (AsyncGenerator)
+from typing import AsyncGenerator
 
 import aiofiles
 import httpx
@@ -35,7 +35,7 @@ def token(url: str, username: str, password: str) -> str:
     )
 
 
-async def up_bytes(            
+async def upload_bytes(            
     filepath: Path,
     chunk_size: int = 524_288_000
 ) -> AsyncGenerator[bytes, None]:
@@ -61,7 +61,7 @@ async def show_progress_bar(filepath: Path) -> AsyncGenerator[bytes, None]:
         file=sys.stdout,
         desc=f'Posting {filepath.name}'
     ) as progress:
-        async for contents in up_bytes(filepath):
+        async for contents in upload_bytes(filepath):
             progress.update(float(len(contents)))
             yield contents            
 
@@ -79,7 +79,7 @@ async def _async_post_file(
                 'filename': filepath.name,
                 'filedir' : filedir
             },
-            data=up_bytes(filepath) if silent \
+            data=upload_bytes(filepath) if silent \
               else show_progress_bar(filepath),
             headers={
                 'Authorization': f'Bearer {tkn}'

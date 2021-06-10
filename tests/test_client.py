@@ -19,8 +19,9 @@ async def main():
                 os.getenv('DATA_SERVER_USERNAME'),
                 os.getenv('DATA_SERVER_PASSWORD'))
     await async_post_file(
-        f'{url}/stream', tkn,
-        Path('/home/mleader/5M.txt')
+        f'{url}/api', tkn,
+        Path('/home/mleader/1G.txt'),
+        '', True
     )
 
 

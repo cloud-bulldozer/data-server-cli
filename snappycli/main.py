@@ -113,7 +113,7 @@ def post_file(
         '',
         envvar='SNAPPY_FILE_DIR'
     ),
-    silent: bool = typer.Option(False, "-s")
+    silent: bool = typer.Option(False, "-s", "--silent")
 ) -> None:
     typer.echo(f"""you're file is at {
     asyncio.run(_async_post_file(

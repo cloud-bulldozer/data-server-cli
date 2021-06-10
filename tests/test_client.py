@@ -13,7 +13,8 @@ async def main():
     
     await async_post_file(
         f'{url}/api', tkn,
-        Path('/home/mleader/5M.txt')
+        Path('/home/mleader/1G.txt'),
+        '', True
     )
             
 

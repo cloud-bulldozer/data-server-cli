@@ -1,9 +1,14 @@
-from pathlib import Path
-from typing import (AsyncGenerator, BinaryIO)
+import sys
 
-from toolz import pipe
-import httpx
+from pathlib import Path
+from typing import (AsyncGenerator)
+
 import aiofiles
+import httpx
+
+from aiofiles import os as aios
+from toolz import pipe
+from tqdm import tqdm
 
 
 def response_handler(r: httpx.Response) -> dict:
@@ -30,25 +35,43 @@ def token(url: str, username: str, password: str) -> str:
     )
 
 
-async def async_upload_bytes(
-    file: BinaryIO,
-    chunk_size: int = 262_144_000
+async def up_bytes(            
+    filepath: Path,
+    chunk_size: int = 524_288_000
 ) -> AsyncGenerator[bytes, None]:
-    # 250 MiB == 250 * 1024 * 1024 == 262_144_000
+    # 500 MiB == 500 * 1024 * 1024 == 524,288,000
     contents = 'dummy'
     pointer = 0
-    while len(contents):
-        await file.seek(pointer)
-        pointer += chunk_size        
-        contents = await file.read(chunk_size)
-        yield contents
+    async with aiofiles.open(filepath, 'rb') as file:
+        while len(contents):
+            await file.seek(pointer)
+            pointer += chunk_size
+            contents = await file.read(chunk_size)
+            yield contents
+
+
+
+async def show_progress_bar(filepath: Path) -> AsyncGenerator[bytes, None]:
+    file_stat = await aios.stat(filepath)
+    with tqdm(
+        total=file_stat.st_size,
+        unit="B",
+        unit_scale=True,
+        unit_divisor=1024,
+        file=sys.stdout,
+        desc=f'Posting {filepath.name}'
+    ) as progress:
+        async for contents in up_bytes(filepath):
+            progress.update(float(len(contents)))
+            yield contents            
 
 
 async def _async_post_file(
-    url: str, tkn: str, filepath: Path, filedir: str = ''
+    url: str, tkn: str, filepath: Path, filedir: str = '', 
+    silent: bool = False
 ) -> httpx.Response:
-    async with aiofiles.open(filepath, 'rb') as file, \
-            httpx.AsyncClient(timeout=httpx.Timeout(
+    
+    async with httpx.AsyncClient(timeout=httpx.Timeout(
                 write=None, read=None, connect=None, pool=None)) as client:
         r = await client.post(
             url,
@@ -56,7 +79,8 @@ async def _async_post_file(
                 'filename': filepath.name,
                 'filedir' : filedir
             },
-            data=async_upload_bytes(file),
+            data=up_bytes(filepath) if silent \
+              else show_progress_bar(filepath),
             headers={
                 'Authorization': f'Bearer {tkn}'
             }
@@ -65,10 +89,10 @@ async def _async_post_file(
 
 
 async def async_post_file(
-    url: str, tkn: str, filepath: Path, filedir: str = ''
+    url: str, tkn: str, filepath: Path, filedir: str = '', silent: bool = False
 ) -> str:
     return pipe(
-        await _async_post_file(url, tkn, filepath, filedir),
+        await _async_post_file(url, tkn, filepath, filedir, silent),
         response_handler,
         lambda r: r['loc']
     )

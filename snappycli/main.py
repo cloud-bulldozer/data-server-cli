@@ -38,10 +38,11 @@ def exception_handler(fn: Callable) -> Callable:
 
 @exception_handler
 async def _async_post_file(
-    url: str, token: str, filepath: Path, filedir: str
+    url: str, token: str, filepath: Path, filedir: str, silent: bool
 ) -> str:
     return await client.async_post_file(
-        url=url, tkn=token, filepath=filepath, filedir=filedir
+        url=url, tkn=token, filepath=filepath, filedir=filedir,
+        silent=silent
     )
 
 
@@ -111,14 +112,16 @@ def post_file(
     filedir: str = typer.Option(
         '',
         envvar='SNAPPY_FILE_DIR'
-    )
+    ),
+    silent: bool = typer.Option(False, "-s", "--silent")
 ) -> None:
-    typer.echo(f"""you're file is at {
+    typer.echo(f"""your file is at {
     asyncio.run(_async_post_file(
         url=f'{url}/api',
         token=auth.token(auth.load()),
         filepath=filepath,
-        filedir=filedir))
+        filedir=filedir,
+        silent=silent))
     }""")
 
 

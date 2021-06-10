@@ -22,14 +22,14 @@ To facilitate your use of `snappy`, define an environment variable, `DATA_SERVER
 
 
 ```shell
-pipx install git+https://github.com/openshift-scale/data-server-cli.git
+pipx install git+https://github.com/cloud-bulldozer/data-server-cli.git
 snappy install
 ```
 
 ## Upgrade
 
 ```shell
-pipx install --force git+https://openshift-scale/data-server-cli.git
+pipx install --force git+https://cloud-bulldozer/data-server-cli.git
 ```
 
 

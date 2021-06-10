@@ -115,7 +115,7 @@ def post_file(
     ),
     silent: bool = typer.Option(False, "-s", "--silent")
 ) -> None:
-    typer.echo(f"""you're file is at {
+    typer.echo(f"""your file is at {
     asyncio.run(_async_post_file(
         url=f'{url}/api',
         token=auth.token(auth.load()),

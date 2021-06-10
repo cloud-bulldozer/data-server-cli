@@ -4,6 +4,7 @@
 import asyncio
 from pathlib import Path
 from typing import Callable
+from functools import wraps
 
 import typer
 from toolz import pipe
@@ -14,14 +15,25 @@ import snappycli.client as client
 app = typer.Typer()
 
 
-def exception_handler(func) -> Callable:
-    def inner_func(*args, **kwargs):
-        try:
-            return func(*args, **kwargs)
-        except Exception as e:
-            typer.echo(e)
-            raise typer.Abort()
-    return inner_func
+def exception_handler(fn: Callable) -> Callable:
+    if asyncio.iscoroutinefunction(fn):
+        @wraps(fn)
+        async def wrapper(*args, **kwargs):
+            try:
+                return await fn(*args, **kwargs)
+            except Exception as e:
+                typer.echo(e)
+                raise typer.Abort()
+        return wrapper
+    else:
+        @wraps(fn)
+        def wrapper(*args, **kwargs):
+            try:
+                return fn(*args, **kwargs)
+            except Exception as e:
+                typer.echo(e)
+                raise typer.Abort()
+        return wrapper
 
 
 @exception_handler

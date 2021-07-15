@@ -12,7 +12,12 @@ from tqdm import tqdm
 
 
 def response_handler(r: httpx.Response) -> dict:
-    r.raise_for_status()
+    try:
+        r.raise_for_status()
+    except httpx.HTTPStatusError as e:
+        detail = r.json().get('detail', None)
+        cause = '\n'.join((detail,str(e))) if detail else str(e)
+        raise Exception(cause).with_traceback(e.__traceback__)
     return r.json()
 
 

@@ -31,7 +31,7 @@ def exception_handler(fn: Callable) -> Callable:
             try:
                 return fn(*args, **kwargs)
             except Exception as e:
-                typer.echo(e)
+                typer.echo(e)                
                 raise typer.Abort()
         return wrapper
 
@@ -40,10 +40,11 @@ def exception_handler(fn: Callable) -> Callable:
 async def _async_post_file(
     url: str, token: str, filepath: Path, filedir: str, silent: bool
 ) -> str:
-    return await client.async_post_file(
+    r = await client.async_post_file(
         url=url, tkn=token, filepath=filepath, filedir=filedir,
         silent=silent
     )
+    return r
 
 
 @exception_handler

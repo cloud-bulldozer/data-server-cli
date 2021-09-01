@@ -4,8 +4,8 @@ Command line interface to a local client for a [snappy data server](https://gith
 
 ## Requirements
 
-Python 3.7.1+  
-pipx  
+Python 3.7.1+
+pipx
 Running snappy data server
 
 ## Install
